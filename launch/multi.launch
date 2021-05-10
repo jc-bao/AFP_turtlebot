@@ -1,0 +1,78 @@
+<launch>
+    <arg name="use_gui" default="true"/>
+    <arg name="model" default="burger"/>
+    <arg name="leader_x_pos" default="1.0"/>
+    <arg name="leader_y_pos" default="0.0"/>
+    <arg name="leader_z_pos" default="0.0"/>
+    <arg name="follower1_x_pos" default="0.0"/>
+    <arg name="follower1_y_pos" default="1.0"/>
+    <arg name="follower1_z_pos" default="0.0"/>
+    <arg name="follower2_x_pos" default="0.0"/>
+    <arg name="follower2_y_pos" default="-1.0"/>
+    <arg name="follower2_z_pos" default="0.0"/>
+
+    <!-- start world -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/empty.world"/>
+        <arg name="paused" value="true"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="$(arg use_gui)"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
+    <!-- call leader -->
+    <group ns="leader">
+        <!-- load robot parameter -->
+        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+        <!-- Spawn it -->
+        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-urdf -model leader -x $(arg leader_x_pos) -y $(arg leader_y_pos) -z $(arg leader_z_pos) -param robot_description" />
+        <!-- state publisher -->
+        <include file="$(find turtlebot3_bringup)/launch/includes/description.launch.xml">
+            <arg name="model" value="$(arg model)" />
+        </include>
+        <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+            <param name="publish_frequency" type="double" value="50.0" />
+            <param name="tf_prefix" type="string" value="/leader" />
+        </node>
+        <!-- run package -->
+        <node pkg="tb_apf" type="tb_leader" name="leader" output="screen"/>
+    </group>
+
+    <!-- call follower 1 -->
+    <group ns="follower1">
+        <!-- load robot parameter -->
+        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+        <!-- Spawn it -->
+        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-urdf -model follower1 -x $(arg follower1_x_pos) -y $(arg follower1_y_pos) -z $(arg follower1_z_pos) -param robot_description" />
+        <!-- state publisher -->
+        <include file="$(find turtlebot3_bringup)/launch/includes/description.launch.xml">
+            <arg name="model" value="$(arg model)" />
+        </include>
+        <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+            <param name="publish_frequency" type="double" value="50.0" />
+            <param name="tf_prefix" type="string" value="/follower1" />
+        </node>
+        <!-- run package -->
+        <node pkg="tb_apf" type="tb_follower1" name="tb_follower1" output="screen"/>
+    </group>
+
+    <!-- call follower 2 -->
+    <group ns="follower2">
+        <!-- load robot parameter -->
+        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+        <!-- Spawn it -->
+        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"  args="-urdf -model follower2 -x $(arg follower2_x_pos) -y $(arg follower2_y_pos) -z $(arg follower2_z_pos) -param robot_description" />
+        <!-- state publisher -->
+        <include file="$(find turtlebot3_bringup)/launch/includes/description.launch.xml">
+            <arg name="model" value="$(arg model)" />
+        </include>
+        <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+            <param name="publish_frequency" type="double" value="50.0" />
+            <param name="tf_prefix" type="string" value="/follower2" />
+        </node>
+        <!-- run package -->
+        <node pkg="tb_apf" type="tb_follower2" name="follower2" output="screen"/>
+    </group>
+
+</launch>
+
