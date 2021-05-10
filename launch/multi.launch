@@ -1,19 +1,19 @@
 <launch>
     <arg name="use_gui" default="true"/>
     <arg name="model" default="burger"/>
-    <arg name="leader_x_pos" default="1.0"/>
+    <arg name="leader_x_pos" default="0.5"/>
     <arg name="leader_y_pos" default="0.0"/>
     <arg name="leader_z_pos" default="0.0"/>
-    <arg name="follower1_x_pos" default="0.0"/>
+    <arg name="follower1_x_pos" default="-0.5"/>
     <arg name="follower1_y_pos" default="1.0"/>
     <arg name="follower1_z_pos" default="0.0"/>
-    <arg name="follower2_x_pos" default="0.0"/>
+    <arg name="follower2_x_pos" default="-0.5"/>
     <arg name="follower2_y_pos" default="-1.0"/>
     <arg name="follower2_z_pos" default="0.0"/>
 
     <!-- start world -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/empty.world"/>
+        <arg name="world_name" value="$(find tb_apf)/worlds/test04.world"/>
         <arg name="paused" value="true"/>
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="$(arg use_gui)"/>
